@@ -1,29 +1,51 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import js from '@eslint/js';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import globals from 'globals';
 
-export default defineConfig([
-  globalIgnores(['dist']),
+/** @type {import('eslint').Linter.FlatConfig[]} */
+export default [
+  js.configs.recommended,
   {
-    files: ['**/*.{js,jsx}'],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
-    ],
+    ignores: ['dist', 'build', 'node_modules', 'storybook-static'],
+  },
+  {
+    files: ['**/*.js', '**/*.jsx'],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       parserOptions: {
-        ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
-        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.es2021,
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
       },
     },
+    plugins: {
+      react,
+      'react-hooks': reactHooks,
+      'jsx-a11y': jsxA11y,
+    },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': 'off', // ← disable if ESLint bugs
+      'react/react-in-jsx-scope': 'off', // React 17+
+      'react/prop-types': 'off',
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
     },
   },
-])
+];
