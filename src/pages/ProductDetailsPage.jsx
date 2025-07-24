@@ -55,7 +55,7 @@ export default function ProductDetailsPage() {
     if (product) {
       setCurrentProduct(product);
     }
-  }, [product]);
+  }, [product, setCurrentProduct]);
 
   useEffect(() => {
     return () => {
